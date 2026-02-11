@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.anton3413</groupId>
-    <artifactId>REST-App</artifactId>
+    <artifactId>Quiz-Hub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>REST-App</name>
     <description>REST-App</description>
