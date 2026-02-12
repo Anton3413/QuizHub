@@ -9,8 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @PasswordMatches
-@Builder
 public record CreateUserRequest(
+
         @NotBlank(message = "Username cannot be empty")
         @Size(min = 3, max = 20, message = "Username: 3-20 characters required")
         @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username: Use only letters, digits and underscores")
@@ -31,5 +31,4 @@ public record CreateUserRequest(
                 message = "Please enter a valid email address")
         @UniqueEmail
         String email
-) {
-}
+) {}

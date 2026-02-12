@@ -44,7 +44,6 @@ public class User {
     @Column(name = "is_activated", nullable = false)
     private boolean activated = false;
 
-    // mappedBy указывает на поле 'user' в классе VerificationToken
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private VerificationToken verificationToken;
 

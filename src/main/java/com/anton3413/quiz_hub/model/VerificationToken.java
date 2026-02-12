@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "activation_tokens")
+@Table(name = "activation_token")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,14 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 public class VerificationToken {
 
-    private static final int EXPIRATION_HOURS = 24;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String token;
+    private UUID token;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,9 +29,4 @@ public class VerificationToken {
     @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
 
-    public VerificationToken(String token, User user) {
-        this.token = token;
-        this.user = user;
-        this.expiryDate = LocalDateTime.now().plusHours(EXPIRATION_HOURS);
-    }
 }

@@ -5,5 +5,4 @@ import java.util.UUID;
 public record CreateUserResponse(
         String message,
         String username,
-        UUID userId) {
-}
+        UUID userId) {}
