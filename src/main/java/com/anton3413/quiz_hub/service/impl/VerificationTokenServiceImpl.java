@@ -18,6 +18,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private final SecurityConfig securityConfig;
 
 
+
     @Override
     public VerificationToken generateForUser(User user) {
         VerificationToken token = VerificationToken.builder()
