@@ -7,7 +7,6 @@ import com.anton3413.quiz_hub.repository.VerificationTokenRepository;
 import com.anton3413.quiz_hub.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
