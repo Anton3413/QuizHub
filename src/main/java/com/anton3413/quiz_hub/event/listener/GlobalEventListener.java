@@ -6,14 +6,14 @@ import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.model.VerificationToken;
 import com.anton3413.quiz_hub.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalEventListener {
 
     private final SecurityConfig securityConfig;
@@ -23,16 +23,11 @@ public class GlobalEventListener {
     public void onUserRegistration(UserRegisteredEvent event) {
         User user = event.user();
 
-        VerificationToken token = VerificationToken.builder()
-                .token(UUID.randomUUID())
-                .user(user)
-                .expiryDate(LocalDateTime.now().plusHours(securityConfig.getToken_expiration()))
-                .build();
+        VerificationToken token = verificationTokenService.generateForUser(user);
 
-        verificationTokenService.save(token);
-
-        System.out.println("Логика регистрации для: " + user.getUsername());
-
+        log.info("Follow this link to activate account for {}: {}/auth/confirm?token={}",
+                user.getUsername(),
+                securityConfig.getBaseUrl(),
+                token.getToken());
     }
-
 }

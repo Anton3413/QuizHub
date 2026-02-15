@@ -6,11 +6,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "app.security.verification")
+@ConfigurationProperties(prefix = "app.security")
 @Getter
 @Setter
 public class SecurityConfig {
 
-    private int token_expiration;
+    private int tokenExpiration;
+
+    private String baseUrl;
 
 }
