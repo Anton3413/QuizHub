@@ -10,6 +10,7 @@ import com.anton3413.quiz_hub.service.UserService;
 import com.anton3413.quiz_hub.util.ApiMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +21,20 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public CreateUserResponse register(CreateUserRequest createUserRequest) {
 
-        User user = userRepository.save(userMapper.fromCreateUserRequestToEntity(createUserRequest));
+        User user = userMapper.fromCreateUserRequestToEntity(createUserRequest);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        eventPublisher.publishEvent(new UserRegisteredEvent(user));
+        User savedUser = userRepository.save(user);
 
-        return userMapper.fromEntityToCreateUserResponse(user, ApiMessages.SUCCESS_USER_CREATED);
+        eventPublisher.publishEvent(new UserRegisteredEvent(savedUser));
+
+        return userMapper.fromEntityToCreateUserResponse(savedUser, ApiMessages.SUCCESS_USER_CREATED);
     }
 
     @Override

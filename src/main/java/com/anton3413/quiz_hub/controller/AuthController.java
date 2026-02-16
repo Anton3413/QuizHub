@@ -12,11 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/auth")
+@RestController
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final  VerificationTokenService tokenService;
+    private final VerificationTokenService tokenService;
     private final UserService userService;
 
 

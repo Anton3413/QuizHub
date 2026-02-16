@@ -51,9 +51,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
                         throw new TokenExpiredException(ApiMessages.ERROR_TOKEN_EXPIRED);
                     }
                     User user = maybeToken.getUser();
-                    user.setActivated(true);
-
-                    verificationTokenRepository.delete(maybeToken);
+                    user.setVerificationToken(null);
 
                     return true;
                 })

@@ -7,6 +7,7 @@ import com.anton3413.quiz_hub.model.VerificationToken;
 import com.anton3413.quiz_hub.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -19,15 +20,19 @@ public class GlobalEventListener {
     private final SecurityConfig securityConfig;
     private final VerificationTokenService verificationTokenService;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
     @EventListener
     public void onUserRegistration(UserRegisteredEvent event) {
         User user = event.user();
 
         VerificationToken token = verificationTokenService.generateForUser(user);
 
-        log.info("Follow this link to activate account for {}: {}/auth/confirm?token={}",
-                user.getUsername(),
+        String activationLink = String.format("%s%s/auth/confirm?token=%s",
                 securityConfig.getBaseUrl(),
+                contextPath,
                 token.getToken());
+
+        log.info("Activation link for {}: {}", user.getUsername(), activationLink);
     }
 }
