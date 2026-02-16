@@ -14,11 +14,13 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "authoredQuizzes", ignore = true)
-    @Mapping(target = "attempts", ignore = true)
+    // @Mapping(target = "attempts", ignore = true)
     @Mapping(target = "verificationToken", ignore = true)
     @Mapping(target = "activated", constant = "false")
     User fromCreateUserRequestToEntity(CreateUserRequest createUserRequest);
 
-    @Mapping(source = "id", target = "userId")
-    CreateUserResponse fromEntityToCreateUserResponse(User user);
+
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "msg", target = "message")
+    CreateUserResponse fromEntityToCreateUserResponse(User user, String msg);
 }

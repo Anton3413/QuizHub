@@ -7,5 +7,5 @@ public interface VerificationTokenService {
 
     VerificationToken generateForUser(User user);
 
-    boolean verifyToken(String token);
+    void verifyToken(String token);
 }

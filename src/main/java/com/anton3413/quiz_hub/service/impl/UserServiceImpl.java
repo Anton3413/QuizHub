@@ -7,6 +7,7 @@ import com.anton3413.quiz_hub.mapper.UserMapper;
 import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.repository.UserRepository;
 import com.anton3413.quiz_hub.service.UserService;
+import com.anton3413.quiz_hub.util.ApiMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -16,18 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final UserMapper userMapper;
 
-
     @Transactional
-    public CreateUserResponse register(CreateUserRequest request) {
-       User user =  userRepository.save(userMapper.fromCreateUserRequestToEntity(request));
+    @Override
+    public CreateUserResponse register(CreateUserRequest createUserRequest) {
 
-       eventPublisher.publishEvent(new UserRegisteredEvent(user));
+        User user = userRepository.save(userMapper.fromCreateUserRequestToEntity(createUserRequest));
 
-       return null;
+        eventPublisher.publishEvent(new UserRegisteredEvent(user));
+
+        return userMapper.fromEntityToCreateUserResponse(user, ApiMessages.SUCCESS_USER_CREATED);
     }
 
     @Override

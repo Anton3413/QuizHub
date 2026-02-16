@@ -51,7 +51,7 @@ public class User {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Quiz> authoredQuizzes = new ArrayList<>();
 
-    @Builder.Default
+    /*@Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Attempt> attempts = new ArrayList<>();
+    private List<Attempt> attempts = new ArrayList<>();*/
 }

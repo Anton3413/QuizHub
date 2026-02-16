@@ -1,12 +1,17 @@
 package com.anton3413.quiz_hub.service.impl;
 
 import com.anton3413.quiz_hub.config.SecurityConfig;
+import com.anton3413.quiz_hub.util.ApiMessages;
+import com.anton3413.quiz_hub.exception.TokenExpiredException;
+import com.anton3413.quiz_hub.exception.TokenNotFoundException;
 import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.model.VerificationToken;
 import com.anton3413.quiz_hub.repository.VerificationTokenRepository;
 import com.anton3413.quiz_hub.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,7 +23,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private final SecurityConfig securityConfig;
 
 
-
+    @Transactional
     @Override
     public VerificationToken generateForUser(User user) {
         VerificationToken token = VerificationToken.builder()
@@ -30,13 +35,20 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         return verificationTokenRepository.save(token);
     }
 
+    @Transactional
     @Override
-    public boolean verifyToken(String token) {
-        return verificationTokenRepository.findVerificationTokenByToken(UUID.fromString(token))
+    public void verifyToken(String token) {
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(token);
+        } catch (IllegalArgumentException e) {
+            throw new TokenNotFoundException(ApiMessages.ERROR_TOKEN_INVALID);
+        }
+
+        verificationTokenRepository.findVerificationTokenByToken(uuid)
                 .map(maybeToken -> {
                     if (maybeToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-                        verificationTokenRepository.delete(maybeToken);
-                        return false;
+                        throw new TokenExpiredException(ApiMessages.ERROR_TOKEN_EXPIRED);
                     }
                     User user = maybeToken.getUser();
                     user.setActivated(true);
@@ -45,6 +57,6 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
 
                     return true;
                 })
-                .orElse(false);
+                .orElseThrow(() -> new TokenNotFoundException(ApiMessages.ERROR_TOKEN_INVALID));
     }
 }
