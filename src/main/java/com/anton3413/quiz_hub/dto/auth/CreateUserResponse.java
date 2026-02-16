@@ -1,4 +1,4 @@
-package com.anton3413.quiz_hub.dto.user;
+package com.anton3413.quiz_hub.dto.auth;
 
 import java.util.UUID;
 

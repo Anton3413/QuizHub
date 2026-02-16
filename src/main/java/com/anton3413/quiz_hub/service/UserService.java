@@ -1,7 +1,7 @@
 package com.anton3413.quiz_hub.service;
 
-import com.anton3413.quiz_hub.dto.user.CreateUserRequest;
-import com.anton3413.quiz_hub.dto.user.CreateUserResponse;
+import com.anton3413.quiz_hub.dto.auth.CreateUserRequest;
+import com.anton3413.quiz_hub.dto.auth.CreateUserResponse;
 
 public interface UserService {
 

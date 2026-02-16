@@ -1,8 +1,8 @@
 package com.anton3413.quiz_hub.controller;
 
 import com.anton3413.quiz_hub.dto.ApiResponse;
-import com.anton3413.quiz_hub.dto.user.CreateUserRequest;
-import com.anton3413.quiz_hub.dto.user.CreateUserResponse;
+import com.anton3413.quiz_hub.dto.auth.CreateUserRequest;
+import com.anton3413.quiz_hub.dto.auth.CreateUserResponse;
 import com.anton3413.quiz_hub.service.UserService;
 import com.anton3413.quiz_hub.service.VerificationTokenService;
 import com.anton3413.quiz_hub.util.ApiMessages;

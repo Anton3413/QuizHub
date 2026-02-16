@@ -1,4 +1,4 @@
-package com.anton3413.quiz_hub.dto.user;
+package com.anton3413.quiz_hub.dto.auth;
 
 import com.anton3413.quiz_hub.validation.annotation.PasswordMatches;
 import com.anton3413.quiz_hub.validation.annotation.UniqueEmail;
@@ -6,7 +6,6 @@ import com.anton3413.quiz_hub.validation.annotation.UniqueUsername;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 
 @PasswordMatches
 public record CreateUserRequest(

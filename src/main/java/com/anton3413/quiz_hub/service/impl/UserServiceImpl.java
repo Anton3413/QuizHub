@@ -1,7 +1,7 @@
 package com.anton3413.quiz_hub.service.impl;
 
-import com.anton3413.quiz_hub.dto.user.CreateUserRequest;
-import com.anton3413.quiz_hub.dto.user.CreateUserResponse;
+import com.anton3413.quiz_hub.dto.auth.CreateUserRequest;
+import com.anton3413.quiz_hub.dto.auth.CreateUserResponse;
 import com.anton3413.quiz_hub.event.UserRegisteredEvent;
 import com.anton3413.quiz_hub.mapper.UserMapper;
 import com.anton3413.quiz_hub.model.User;
