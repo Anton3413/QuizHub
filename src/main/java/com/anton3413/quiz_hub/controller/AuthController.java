@@ -32,6 +32,6 @@ public class AuthController {
     public ResponseEntity<ApiResponse> activateAccountWithToken(@RequestParam String token){
         tokenService.verifyToken(token);
 
-        return ResponseEntity.ok(new ApiResponse(ApiMessages.SUCCESS_TOKEN_ACTIVATED));
+        return ResponseEntity.ok(new ApiResponse(ApiMessages.SUCCESS_ACCOUNT_ACTIVATED));
     }
 }

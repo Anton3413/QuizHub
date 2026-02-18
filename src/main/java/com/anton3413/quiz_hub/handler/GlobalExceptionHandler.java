@@ -1,14 +1,16 @@
 package com.anton3413.quiz_hub.handler;
 
 import com.anton3413.quiz_hub.dto.ApiResponse;
-import com.anton3413.quiz_hub.exception.TokenExpiredException;
-import com.anton3413.quiz_hub.exception.TokenNotFoundException;
+import com.anton3413.quiz_hub.exception.ActivationTokenExpiredException;
+import com.anton3413.quiz_hub.exception.ActivationTokenNotFoundException;
 import com.anton3413.quiz_hub.util.ApiMessages;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +23,8 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(TokenNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleNonExistentToken(TokenNotFoundException exception,
+    @ExceptionHandler(ActivationTokenNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleNonExistentToken(ActivationTokenNotFoundException exception,
                                                               HttpServletRequest request){
 
         final String tokenValue = request.getParameter("token");
@@ -31,8 +33,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(exception.getMessage()));
     }
 
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<ApiResponse> handleExpiredToken(TokenExpiredException exception,
+    @ExceptionHandler(ActivationTokenExpiredException.class)
+    public ResponseEntity<ApiResponse> handleExpiredToken(ActivationTokenExpiredException exception,
                                                           HttpServletRequest request){
 
         final String tokenValue = request.getParameter("token");
@@ -59,4 +61,30 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(new ApiResponse(ApiMessages.ERROR_VALIDATION_FAILED, errors));
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse> handleBadCredentials(BadCredentialsException e) {
+        log.warn("Authorization failed: login or password is incorrect");
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(ApiMessages.ERROR_BAD_CREDENTIALS));
+    }
+
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse> handleDisabled(DisabledException e) {
+        log.warn("Authorization failed: Account not activated");
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponse(ApiMessages.ERROR_ACCOUNT_NOT_ACTIVATED));
+    }
+
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public ResponseEntity<ApiResponse> handleAuthException(Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(ApiMessages.ERROR_JWT_TOKEN_INVALID));
+    }
+
+
 }

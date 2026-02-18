@@ -1,6 +1,6 @@
 package com.anton3413.quiz_hub.event.listener;
 
-import com.anton3413.quiz_hub.config.SecurityConfig;
+import com.anton3413.quiz_hub.security.SecurityConfig;
 import com.anton3413.quiz_hub.event.UserRegisteredEvent;
 import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.model.VerificationToken;

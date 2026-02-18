@@ -1,9 +1,9 @@
 package com.anton3413.quiz_hub.service.impl;
 
-import com.anton3413.quiz_hub.config.SecurityConfig;
+import com.anton3413.quiz_hub.security.SecurityConfig;
 import com.anton3413.quiz_hub.util.ApiMessages;
-import com.anton3413.quiz_hub.exception.TokenExpiredException;
-import com.anton3413.quiz_hub.exception.TokenNotFoundException;
+import com.anton3413.quiz_hub.exception.ActivationTokenExpiredException;
+import com.anton3413.quiz_hub.exception.ActivationTokenNotFoundException;
 import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.model.VerificationToken;
 import com.anton3413.quiz_hub.repository.VerificationTokenRepository;
@@ -42,19 +42,19 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         try {
             uuid = UUID.fromString(token);
         } catch (IllegalArgumentException e) {
-            throw new TokenNotFoundException(ApiMessages.ERROR_TOKEN_INVALID);
+            throw new ActivationTokenNotFoundException(ApiMessages.ERROR_ACTIVATION_TOKEN_INVALID);
         }
 
         verificationTokenRepository.findVerificationTokenByToken(uuid)
                 .map(maybeToken -> {
                     if (maybeToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-                        throw new TokenExpiredException(ApiMessages.ERROR_TOKEN_EXPIRED);
+                        throw new ActivationTokenExpiredException(ApiMessages.ERROR_ACTIVATION_TOKEN_EXPIRED);
                     }
                     User user = maybeToken.getUser();
                     user.setVerificationToken(null);
 
                     return true;
                 })
-                .orElseThrow(() -> new TokenNotFoundException(ApiMessages.ERROR_TOKEN_INVALID));
+                .orElseThrow(() -> new ActivationTokenNotFoundException(ApiMessages.ERROR_ACTIVATION_TOKEN_INVALID));
     }
 }
