@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueUsername {
-    String message() default "User with that email already registered";
+    String message() default "User with that username already registered";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

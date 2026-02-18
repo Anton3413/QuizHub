@@ -52,7 +52,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
                     }
                     User user = maybeToken.getUser();
                     user.setVerificationToken(null);
-
+                    user.setActivated(true);
                     return true;
                 })
                 .orElseThrow(() -> new ActivationTokenNotFoundException(ApiMessages.ERROR_ACTIVATION_TOKEN_INVALID));

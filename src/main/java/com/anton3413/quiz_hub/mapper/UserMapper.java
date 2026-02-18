@@ -20,7 +20,6 @@ public interface UserMapper {
     User fromCreateUserRequestToEntity(CreateUserRequest createUserRequest);
 
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "msg", target = "message")
-    CreateUserResponse fromEntityToCreateUserResponse(User user, String msg);
+    @Mapping(source = "id", target = "userId")
+    CreateUserResponse fromEntityToCreateUserResponse(User user);
 }

@@ -32,16 +32,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return userRepository.findByUsername(username)
-                .map(user -> new org.springframework.security.core.userdetails.User(
+        User user = findByUsername(username);
+
+        return new org.springframework.security.core.userdetails.User(
                         user.getUsername(),
                         user.getPassword(),
                         user.isActivated(),
                         true,
                         true,
                         true,
-                        AuthorityUtils.createAuthorityList("USER"))
-                ).orElseThrow(() -> new UsernameNotFoundException(ApiMessages.ERROR_USER_NOT_FOUND));
+                        AuthorityUtils.createAuthorityList("USER"));
     }
 
     @Transactional
@@ -55,7 +55,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         eventPublisher.publishEvent(new UserRegisteredEvent(savedUser));
 
-        return userMapper.fromEntityToCreateUserResponse(savedUser, ApiMessages.SUCCESS_USER_CREATED);
+        return userMapper.fromEntityToCreateUserResponse(savedUser);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+       return userRepository.findByUsername(username)
+               .orElseThrow(() -> new UsernameNotFoundException(ApiMessages.ERROR_USER_NOT_FOUND));
     }
 
     @Override

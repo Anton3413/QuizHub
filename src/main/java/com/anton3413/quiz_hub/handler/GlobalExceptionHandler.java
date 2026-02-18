@@ -24,23 +24,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ActivationTokenNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleNonExistentToken(ActivationTokenNotFoundException exception,
+    public ResponseEntity<ApiResponse> handleNonExistentActivationToken(ActivationTokenNotFoundException exception,
                                                               HttpServletRequest request){
 
         final String tokenValue = request.getParameter("token");
 
         log.warn("Account activation failed: Token [{}] not found.", tokenValue);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.of(exception.getMessage()));
     }
 
     @ExceptionHandler(ActivationTokenExpiredException.class)
-    public ResponseEntity<ApiResponse> handleExpiredToken(ActivationTokenExpiredException exception,
-                                                          HttpServletRequest request){
+    public ResponseEntity<ApiResponse> handleExpiredActivationToken(ActivationTokenExpiredException exception,
+                                                                    HttpServletRequest request){
 
         final String tokenValue = request.getParameter("token");
 
         log.warn("Account activation failed: Token [{}] expired.", tokenValue);
-        return ResponseEntity.status(HttpStatus.GONE).body(new ApiResponse(exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.GONE).body(ApiResponse.of(exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -52,14 +52,14 @@ public class GlobalExceptionHandler {
         if (error instanceof FieldError fieldError) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         } else {
-            errors.put(error.getObjectName(), error.getDefaultMessage());
+            errors.put("global_error", error.getDefaultMessage());
         }
     });
 
     log.warn("Validation failed: {} errors found", errors.size());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new ApiResponse(ApiMessages.ERROR_VALIDATION_FAILED, errors));
+            .body(ApiResponse.withErrors(ApiMessages.ERROR_VALIDATION_FAILED, errors));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -67,23 +67,24 @@ public class GlobalExceptionHandler {
         log.warn("Authorization failed: login or password is incorrect");
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse(ApiMessages.ERROR_BAD_CREDENTIALS));
+                .body(ApiResponse.of(ApiMessages.ERROR_BAD_CREDENTIALS));
     }
-
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ApiResponse> handleDisabled(DisabledException e) {
         log.warn("Authorization failed: Account not activated");
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ApiResponse(ApiMessages.ERROR_ACCOUNT_NOT_ACTIVATED));
+                .body(ApiResponse.of(ApiMessages.ERROR_ACCOUNT_NOT_ACTIVATED));
     }
 
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
     public ResponseEntity<ApiResponse> handleAuthException(Exception e) {
+
+        log.warn("Authorization error: JWT token is invalid or expired");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse(ApiMessages.ERROR_JWT_TOKEN_INVALID));
+                .body(ApiResponse.of(ApiMessages.ERROR_JWT_TOKEN_INVALID));
     }
 
 

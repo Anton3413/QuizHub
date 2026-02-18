@@ -2,20 +2,30 @@ package com.anton3413.quiz_hub.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
-public record ApiResponse(
+public record ApiResponse <T>(
         String message,
-        LocalDateTime timestamp,
+        Instant timestamp,
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        T data,
+
         @JsonInclude(JsonInclude.Include.NON_NULL)
         Map<String, String> errors
 ) {
-    public ApiResponse(String message) {
-        this(message, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), null);
+    public static <T> ApiResponse<T> of(String message) {
+        return new ApiResponse<>(message, Instant.now().truncatedTo(ChronoUnit.SECONDS), null, null);
     }
-    public ApiResponse(String message, Map<String, String> errors) {
-        this(message, LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), errors);
+
+    public static <T> ApiResponse<T> withData(String message, T data) {
+        return new ApiResponse<>(message, Instant.now().truncatedTo(ChronoUnit.SECONDS), data, null);
+    }
+
+    public static <T> ApiResponse<T> withErrors(String message, Map<String, String> errors) {
+        return new ApiResponse<>(message, Instant.now().truncatedTo(ChronoUnit.SECONDS), null, errors);
     }
 }

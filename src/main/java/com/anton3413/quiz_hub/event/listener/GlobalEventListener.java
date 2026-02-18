@@ -28,7 +28,7 @@ public class GlobalEventListener {
 
         VerificationToken token = verificationTokenService.generateForUser(user);
 
-        String activationLink = String.format("%s%s/auth/confirm?token=%s",
+        String activationLink = String.format("%s%s/auth/activate?token=%s",
                 securityConfig.getBaseUrl(),
                 contextPath,
                 token.getToken());
