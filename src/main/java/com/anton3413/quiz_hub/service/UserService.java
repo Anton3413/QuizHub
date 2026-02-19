@@ -15,4 +15,8 @@ public interface UserService {
     CreateUserResponse register(CreateUserRequest createUserRequest);
 
     User findByUsername(String username);
+
+    public void incrementFailedAttempts(String username);
+
+    public void resetFailedAttempts(String username);
 }

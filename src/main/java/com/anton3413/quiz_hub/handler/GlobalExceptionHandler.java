@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -78,14 +79,21 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.of(ApiMessages.ERROR_ACCOUNT_NOT_ACTIVATED));
     }
 
-
     @ExceptionHandler(InsufficientAuthenticationException.class)
-    public ResponseEntity<ApiResponse> handleAuthException(Exception e) {
+    public ResponseEntity<ApiResponse> handleAuth(Exception e) {
 
         log.warn("Authorization error: JWT token is invalid or expired");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.of(ApiMessages.ERROR_JWT_TOKEN_INVALID));
     }
 
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ApiResponse> handleLocked(LockedException e) {
+        log.warn("Authorization error: Account is locked!");
 
+        Map<String, String> errors = Map.of("locked until", e.getMessage(), "reason", "too_many_attempts");
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.withErrors(ApiMessages.FAILURE_ACCOUNT_LOCKED, errors));
+    }
 }

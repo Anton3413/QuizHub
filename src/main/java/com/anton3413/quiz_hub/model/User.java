@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +46,22 @@ public class User {
     @Column(name = "is_activated", nullable = false)
     private boolean activated = false;
 
+    @Column(name = "failed_login_attempts")
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "locked_until")
+    private Instant lockedUntil;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private VerificationToken verificationToken;
 
     @Builder.Default
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Quiz> authoredQuizzes = new ArrayList<>();
+
+    public boolean isLocked() {
+        return lockedUntil != null && lockedUntil.isAfter(Instant.now());
+    }
 
     /*@Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

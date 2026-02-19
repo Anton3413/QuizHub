@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                         user.isActivated(),
                         true,
                         true,
-                        true,
+                        !user.isLocked(),
                         AuthorityUtils.createAuthorityList("USER"));
     }
 
@@ -72,5 +74,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean isEmailRegistered(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Transactional
+    public void incrementFailedAttempts(String username) {
+        userRepository.findByUsername(username).ifPresent(user -> {
+            user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
+
+            if (user.getFailedLoginAttempts() >= 5) {
+                user.setLockedUntil(Instant.now().plus(30, ChronoUnit.MINUTES));
+            }
+            userRepository.save(user);
+        });
+    }
+
+    @Transactional
+    public void resetFailedAttempts(String username) {
+        userRepository.findByUsername(username).ifPresent(user -> {
+            if (user.getFailedLoginAttempts() > 0 || user.getLockedUntil() != null) {
+                user.setFailedLoginAttempts(0);
+                user.setLockedUntil(null);
+                userRepository.save(user);
+            }
+        });
     }
 }

@@ -14,4 +14,6 @@ public final class ApiMessages {
     public static final String ERROR_ACCOUNT_NOT_ACTIVATED = "The account is not activated. Check your email or request a new token.";
     public static final String ERROR_JWT_TOKEN_INVALID = "Authorization error: token is invalid or missing";
     public static final String SUCCESS_LOGIN_SUCCESSFUL= "Login successful";
+    public static final String FAILURE_ACCOUNT_LOCKED = "Due to multiple failed login attempts, your account has been temporarily locked. Please try again later.";
+
 }

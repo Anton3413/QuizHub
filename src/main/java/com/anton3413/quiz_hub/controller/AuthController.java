@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,17 +52,27 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody @Valid LoginRequest request) {
+        try{
+            final Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
-        final Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+            final UserDetails userDetails = (UserDetails) auth.getPrincipal();
 
-        final UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            userService.resetFailedAttempts(userDetails.getUsername());
 
-        final String jwtToken = jwtService.generateToken(userDetails);
-        final Instant expiresAt = jwtService.extractClaim(jwtToken, Claims::getExpiration).toInstant();
+            final String jwtToken = jwtService.generateToken(userDetails);
+            final Instant expiresAt = jwtService.extractClaim(jwtToken, Claims::getExpiration).toInstant();
 
-        final LoginResponse response = new LoginResponse(jwtToken, "Bearer", expiresAt, userDetails.getUsername());
+            final LoginResponse response = new LoginResponse(jwtToken, "Bearer", expiresAt, userDetails.getUsername());
 
-        return ResponseEntity.ok(ApiResponse.withData(ApiMessages.SUCCESS_LOGIN_SUCCESSFUL, response));
+            return ResponseEntity.ok(ApiResponse.withData(ApiMessages.SUCCESS_LOGIN_SUCCESSFUL, response));
+
+        } catch (LockedException e) {
+            var lockedUntil = userService.findByUsername(request.username()).getLockedUntil().toString();
+            throw new LockedException(lockedUntil);
+        } catch (BadCredentialsException e) {
+            userService.incrementFailedAttempts(request.username());
+            throw e;
+        }
     }
 }
