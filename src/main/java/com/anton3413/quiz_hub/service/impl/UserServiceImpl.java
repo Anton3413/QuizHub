@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                         AuthorityUtils.createAuthorityList("USER"));
     }
 
+
     @Transactional
     @Override
     public CreateUserResponse register(CreateUserRequest createUserRequest) {
