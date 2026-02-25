@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "option")
+@Table(name = "question_options")
 @Getter
 @Setter
 @NoArgsConstructor
