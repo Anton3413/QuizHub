@@ -2,6 +2,7 @@ package com.anton3413.quiz_hub.mapper;
 
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizRequest;
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizResponse;
+import com.anton3413.quiz_hub.dto.quiz.QuizSummaryResponse;
 import com.anton3413.quiz_hub.model.Quiz;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,4 +15,7 @@ public interface QuizMapper {
 
     @Mapping(source = "author.username", target = "username" )
     CreateQuizResponse fromEntityToCreateQuizResponse(Quiz quiz);
+
+
+    QuizSummaryResponse fromEntityToQuizSummaryResponse(Quiz quiz);
 }

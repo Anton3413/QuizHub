@@ -3,18 +3,17 @@ package com.anton3413.quiz_hub.controller;
 import com.anton3413.quiz_hub.dto.ApiResponse;
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizRequest;
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizResponse;
+import com.anton3413.quiz_hub.dto.quiz.QuizSummaryResponse;
 import com.anton3413.quiz_hub.service.QuizService;
 import com.anton3413.quiz_hub.util.ApiMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/quizzes")
@@ -32,5 +31,16 @@ public class QuizController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.withData(ApiMessages.SUCCESS_TEST_CREATED,response));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<List<QuizSummaryResponse>>> getOwnQuizzes(Principal principal){
+
+        final String username = principal.getName();
+
+        final List<QuizSummaryResponse> quizzes = quizService.findAllByUsername(username);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.withData("My quizzes", quizzes));
     }
 }
