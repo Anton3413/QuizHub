@@ -3,7 +3,7 @@ package com.anton3413.quiz_hub.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +27,8 @@ public class VerificationToken {
     private User user;
 
     @Column(name = "expiry_date", nullable = false)
-    private LocalDateTime expiryDate;
+    private Instant expiryDate;
 
+    @Column(name = "verification_attempts")
+    private int verificationAttempts = 0;
 }

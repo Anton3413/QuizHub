@@ -21,8 +21,7 @@ public class SecurityConfig {
     private final DelegatedAuthenticationEntryPoint delegatedAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Value("${application.security.token-expiration}")
-    private int tokenExpiration;
+
 
     @Value("${application.security.base-url}")
     private String baseUrl;

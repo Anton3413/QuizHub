@@ -1,6 +1,7 @@
 package com.anton3413.quiz_hub.handler;
 
 import com.anton3413.quiz_hub.dto.ApiResponse;
+import com.anton3413.quiz_hub.exception.AccountActivationAttemptsHaveEnded;
 import com.anton3413.quiz_hub.exception.ActivationTokenExpiredException;
 import com.anton3413.quiz_hub.exception.ActivationTokenNotFoundException;
 import com.anton3413.quiz_hub.util.ApiMessages;
@@ -35,13 +36,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ActivationTokenExpiredException.class)
-    public ResponseEntity<ApiResponse> handleExpiredActivationToken(ActivationTokenExpiredException exception,
-                                                                    HttpServletRequest request){
+    public ResponseEntity<ApiResponse> handleExpiredActivationToken(ActivationTokenExpiredException exception){
 
-        final String tokenValue = request.getParameter("token");
+        log.warn("Account activation failed: Token is expired, but new one generated");
 
-        log.warn("Account activation failed: Token [{}] expired.", tokenValue);
-        return ResponseEntity.status(HttpStatus.GONE).body(ApiResponse.of(exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.of(exception.getMessage()));
+    }
+
+    @ExceptionHandler(AccountActivationAttemptsHaveEnded.class)
+    public ResponseEntity<ApiResponse> handleNoMoreActivationAttempts(AccountActivationAttemptsHaveEnded exception){
+
+        log.warn("Account activation error: attempts to generate token ended.");
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ApiResponse.of(exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -94,6 +101,6 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = Map.of("locked until", e.getMessage(), "reason", "too_many_attempts");
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.withErrors(ApiMessages.FAILURE_ACCOUNT_LOCKED, errors));
+                .body(ApiResponse.withErrors(ApiMessages.ERROR_ACCOUNT_LOCKED, errors));
     }
 }
