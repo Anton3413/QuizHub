@@ -4,11 +4,13 @@ import com.anton3413.quiz_hub.dto.ApiResponse;
 import com.anton3413.quiz_hub.exception.AccountActivationAttemptsHaveEnded;
 import com.anton3413.quiz_hub.exception.ActivationTokenExpiredException;
 import com.anton3413.quiz_hub.exception.ActivationTokenNotFoundException;
+import com.anton3413.quiz_hub.exception.QuizNotFoundException;
 import com.anton3413.quiz_hub.util.ApiMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -102,5 +104,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.withErrors(ApiMessages.ERROR_ACCOUNT_LOCKED, errors));
+    }
+
+    @ExceptionHandler(QuizNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleQuizNotFound(QuizNotFoundException exception) {
+        log.warn("Quiz with id {} not found",exception.getQuizId());
+
+        Map<String, String> data = Map.of("quiz_id", exception.getQuizId().toString());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.withData(exception.getMessage(), data));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAccessDenied(AccessDeniedException exception) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.of(exception.getMessage()));
     }
 }

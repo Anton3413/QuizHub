@@ -30,7 +30,7 @@ public class QuizController {
         CreateQuizResponse response = quizService.createQuizForUser(createQuizRequest, username);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.withData(ApiMessages.SUCCESS_TEST_CREATED,response));
+                .body(ApiResponse.withData(ApiMessages.SUCCESS_QUIZ_CREATED,response));
     }
 
     @GetMapping("/my")

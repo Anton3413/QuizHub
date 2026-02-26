@@ -17,5 +17,7 @@ public final class ApiMessages {
     public static final String ERROR_ACCOUNT_LOCKED = "Due to multiple failed login attempts, your account has been temporarily locked. Please try again later";
     public static final String ERROR_ACTIVATION_TOKEN_FORMAT_INVALID="This is an invalid activation token format. Please double-check the link";
     public static final String ERROR_ACTIVATION_TOKEN_ATTEMPTS_ENDED="The number of attempts to activate your account has expired. Contact the administration or register again using a new email";
-    public static final String SUCCESS_TEST_CREATED = "New Quiz has  been successfully created";
+    public static final String SUCCESS_QUIZ_CREATED = "New Quiz has  been successfully created";
+    public static final String ERROR_QUIZ_NOT_FOUND = "Quiz test with the specified ID was not found. Please double-check that the ID is correct";
+    public static final String ERROR_QUIZ_ACCESS_DENIED = "You are not the author of this quiz";
 }

@@ -32,4 +32,9 @@ public class Question {
     @Builder.Default
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
+
+    public void addOption(Option option) {
+        options.add(option);
+        option.setQuestion(this);
+    }
 }
