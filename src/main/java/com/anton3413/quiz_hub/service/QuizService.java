@@ -13,6 +13,6 @@ public interface QuizService {
 
     List<QuizSummaryResponse> findAllByUsername(String username);
 
-    void deleteQuiz(UUID quizId);
+    void deleteQuizById(UUID quizId, String username);
 
 }

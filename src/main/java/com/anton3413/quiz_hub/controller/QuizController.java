@@ -46,8 +46,8 @@ public class QuizController {
     }
 
     @DeleteMapping("/{quizId}")
-    public ResponseEntity<ApiResponse> removeQuiz(@PathVariable UUID quizId){
-        quizService.deleteQuiz(quizId);
+    public ResponseEntity<ApiResponse> removeQuiz(@PathVariable UUID quizId, Principal principal){
+        quizService.deleteQuizById(quizId, principal.getName());
 
         return ResponseEntity.ok(ApiResponse.of(ApiMessages.SUCCESS_QUIZ_REMOVED));
     }

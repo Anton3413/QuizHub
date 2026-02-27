@@ -3,13 +3,16 @@ package com.anton3413.quiz_hub.service.impl;
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizRequest;
 import com.anton3413.quiz_hub.dto.quiz.CreateQuizResponse;
 import com.anton3413.quiz_hub.dto.quiz.QuizSummaryResponse;
+import com.anton3413.quiz_hub.exception.QuizNotFoundException;
 import com.anton3413.quiz_hub.mapper.QuizMapper;
 import com.anton3413.quiz_hub.model.Quiz;
 import com.anton3413.quiz_hub.model.User;
 import com.anton3413.quiz_hub.repository.QuizRepository;
 import com.anton3413.quiz_hub.service.QuizService;
 import com.anton3413.quiz_hub.service.UserService;
+import com.anton3413.quiz_hub.util.ApiMessages;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +49,13 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public void deleteQuiz(UUID quizId) {
-        quizRepository.deleteById(quizId);
+    public void deleteQuizById(UUID quizId, String username) {
+       var quiz =  quizRepository.findById(quizId)
+               .orElseThrow(() -> new QuizNotFoundException(ApiMessages.ERROR_QUIZ_NOT_FOUND, quizId));
+
+       if(quiz.getAuthor().getUsername().equals(username)){
+           quizRepository.delete(quiz);
+       }
+       else throw new  AccessDeniedException(ApiMessages.ERROR_QUIZ_ACCESS_DENIED);
     }
 }
