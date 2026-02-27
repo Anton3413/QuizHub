@@ -20,4 +20,6 @@ public final class ApiMessages {
     public static final String SUCCESS_QUIZ_CREATED = "New Quiz has  been successfully created";
     public static final String ERROR_QUIZ_NOT_FOUND = "Quiz test with the specified ID was not found. Please double-check that the ID is correct";
     public static final String ERROR_QUIZ_ACCESS_DENIED = "You are not the author of this quiz";
+    public static final String SUCCESS_QUIZ_REMOVED = "Quiz has been deleted";
+
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController()
 @RequestMapping("/quizzes")
@@ -42,5 +43,12 @@ public class QuizController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.withData("My quizzes", quizzes));
+    }
+
+    @DeleteMapping("/{quizId}")
+    public ResponseEntity<ApiResponse> removeQuiz(@PathVariable UUID quizId){
+        quizService.deleteQuiz(quizId);
+
+        return ResponseEntity.ok(ApiResponse.of(ApiMessages.SUCCESS_QUIZ_REMOVED));
     }
 }
