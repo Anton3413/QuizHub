@@ -1,8 +1,6 @@
 package com.anton3413.quiz_hub.service.impl;
 
-import com.anton3413.quiz_hub.dto.quiz.CreateQuizRequest;
-import com.anton3413.quiz_hub.dto.quiz.CreateQuizResponse;
-import com.anton3413.quiz_hub.dto.quiz.QuizSummaryResponse;
+import com.anton3413.quiz_hub.dto.quiz.*;
 import com.anton3413.quiz_hub.exception.QuizNotFoundException;
 import com.anton3413.quiz_hub.mapper.QuizMapper;
 import com.anton3413.quiz_hub.model.Quiz;
@@ -29,7 +27,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public CreateQuizResponse createQuizForUser(CreateQuizRequest createQuizRequest, String username) {
+    public QuizResponse createQuizForUser(CreateQuizRequest createQuizRequest, String username) {
         final User user = userService.findByUsername(username);
 
         Quiz quiz = quizMapper.fromCreateQuizRequestToEntity(createQuizRequest);
@@ -57,5 +55,40 @@ public class QuizServiceImpl implements QuizService {
            quizRepository.delete(quiz);
        }
        else throw new  AccessDeniedException(ApiMessages.ERROR_QUIZ_ACCESS_DENIED);
+    }
+
+    @Override
+    @Transactional
+    public QuizResponse updateQuizById(UUID quizId, UpdateQuizRequest request, String username) {
+        var quiz =  quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException(ApiMessages.ERROR_QUIZ_NOT_FOUND, quizId));
+
+        if(!quiz.getAuthor().getUsername().equals(username)){
+            throw new  AccessDeniedException(ApiMessages.ERROR_QUIZ_ACCESS_DENIED);
+        }
+        else{
+            if(request.isPublic()!=null && quiz.isPublic() != request.isPublic()){
+                quiz.setPublic(request.isPublic());
+            }
+            if(request.title()!= null){
+                quiz.setTitle(request.title());
+            }
+            if(request.description() != null){
+                quiz.setDescription(request.description());
+            }
+        }
+       Quiz updatedQuiz =  quizRepository.save(quiz);
+       return quizMapper.fromEntityToCreateQuizResponse(updatedQuiz);
+    }
+
+    @Override
+    public QuizDetailResponse findQuizById(UUID quizId, String username) {
+        var quiz =  quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException(ApiMessages.ERROR_QUIZ_NOT_FOUND, quizId));
+
+        if(!quiz.getAuthor().getUsername().equals(username)){
+            throw new  AccessDeniedException(ApiMessages.ERROR_QUIZ_ACCESS_DENIED);
+        }
+        return quizMapper.toDetailResponse(quiz);
     }
 }
